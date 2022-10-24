@@ -10,7 +10,7 @@ let
     rev = "v${version}";
     sha256 = "sha256-h5bN75agNocRAjShbufRCJr45huYJOzCBd4OcGpF4C4=";
   };
-  
+
   offlineCache = fetchYarnDeps {
     yarnLock = src + "/site/yarn.lock";
     sha256 = "sha256-uDNPRQTpsgxyC5ks+2Qq/wiKjkbjWwSO+cJc5X6qmAA=";
@@ -51,12 +51,12 @@ buildGoModule rec {
 
   tags = [ "embed" ];
 
-  nativeBuildInputs = with pkgs; [ 
-    fixup_yarn_lock 
+  nativeBuildInputs = with pkgs; [
+    fixup_yarn_lock
     nodejs-16_x
-    yarn16 
-    nodePackages16.node-pre-gyp 
-    python3 
+    yarn16
+    nodePackages16.node-pre-gyp
+    python3
     pkg-config
     installShellFiles
   ];
