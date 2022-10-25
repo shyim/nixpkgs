@@ -46,7 +46,7 @@ buildGoModule rec {
     cd ..
   '';
 
-  postBuild = ''
+  postInstall = ''
     wrapProgram $out/bin/coder --prefix PATH : ${lib.makeBinPath [ pkgs.terraform ]}
   '';
 
