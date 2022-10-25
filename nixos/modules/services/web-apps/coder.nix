@@ -98,7 +98,7 @@ in {
   config = mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.postgresqlUrl == null;
+        assertion = cfg.postgresqlUrl != null;
         message = "Coder requires a valid postgres url set to services.coder.postgresqlUrl";
       }
     ];
