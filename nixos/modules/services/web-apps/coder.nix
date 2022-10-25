@@ -115,18 +115,6 @@ in {
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
-      preStart = ''
-        mkdir -p ${cfg.homeDir}/.config/coderv2/postgres/bin/bin
-        rm -f ${cfg.homeDir}/.config/coderv2/postgres/bin/bin/initdb
-        rm -f ${cfg.homeDir}/.config/coderv2/postgres/bin/bin/pg_ctl
-        rm -f ${cfg.homeDir}/.config/coderv2/postgres/bin/bin/postgres
-        rm -f ${cfg.homeDir}/.config/coderv2/postgres/bin/share
-        ln -s ${pkgs.postgresql_14}/bin/initdb ${cfg.homeDir}/.config/coderv2/postgres/bin/bin/initdb
-        ln -s ${pgCtl} ${cfg.homeDir}/.config/coderv2/postgres/bin/bin/pg_ctl
-        ln -s ${pkgs.postgresql_14}/bin/postgres ${cfg.homeDir}/.config/coderv2/postgres/bin/bin/postgres
-        ln -s ${pkgs.postgresql_14}/share ${cfg.homeDir}/.config/coderv2/postgres/bin/
-      '';
-
       environment = {
         CODER_ACCESS_URL = cfg.accessUrl;
         CODER_WILDCARD_ACCESS_URL = cfg.wildcardAccessUrl;
