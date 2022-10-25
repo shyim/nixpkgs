@@ -69,5 +69,6 @@ buildGoModule rec {
     license = licenses.agpl3Only;
     homepage = "https://coder.com/";
     maintainers = with maintainers; [ shyim ];
+    changelog = "https://github.com/coder/coder/releases/tag/${src.rev}";
   };
 }

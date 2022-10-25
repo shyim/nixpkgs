@@ -98,19 +98,12 @@ in {
   config = mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.postgresqlUrl == null;
+        assertion = cfg.postgresqlUrl != null;
         message = "Coder requires a valid postgres url set to services.coder.postgresqlUrl";
       }
     ];
 
-    systemd.services.coder = let
-      # see https://github.com/coder/coder/issues/4731
-      pgCtl = pkgs.writeScript "pg_ctl" ''
-        #!${pkgs.bash}/bin/bash
-
-        exec ${pkgs.postgresql_14}/bin/pg_ctl "$@" -o '--unix_socket_directories=${cfg.homeDir}'
-      '';
-    in {
+    systemd.services.coder = {
       description = "Coder - Self-hosted developer workspaces on your infra";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
@@ -126,23 +119,20 @@ in {
       };
 
       serviceConfig = {
-        Type = "notify";
         ProtectSystem = "full";
         PrivateTmp = "yes";
         PrivateDevices = "yes";
         SecureBits = "keep-caps";
-        AmbientCapabilities="CAP_IPC_LOCK CAP_NET_BIND_SERVICE";
-        CacheDirectory="coder";
-        CapabilityBoundingSet="CAP_SYSLOG CAP_IPC_LOCK CAP_NET_BIND_SERVICE";
-        KillSignal="SIGINT";
-        KillMode="mixed";
-        NoNewPrivileges="yes";
-        Restart ="on-failure";
-        RestartSec=5;
-        TimeoutStopSec=90;
-        ExecStart = ''
-          ${cfg.package}/bin/coder server
-        '';
+        AmbientCapabilities = "CAP_IPC_LOCK CAP_NET_BIND_SERVICE";
+        CacheDirectory = "coder";
+        CapabilityBoundingSet = "CAP_SYSLOG CAP_IPC_LOCK CAP_NET_BIND_SERVICE";
+        KillSignal = "SIGINT";
+        KillMode = "mixed";
+        NoNewPrivileges = "yes";
+        Restart = "on-failure";
+        RestartSec = 5;
+        TimeoutStopSec = 90;
+        ExecStart = "${cfg.package}/bin/coder server";
         User = cfg.user;
         Group = cfg.group;
       };
