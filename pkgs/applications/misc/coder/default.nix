@@ -1,4 +1,4 @@
-{ lib, pkgs, fetchFromGitHub, installShellFiles, buildGoModule, fetchYarnDeps }:
+{ lib, pkgs, fetchFromGitHub, installShellFiles, makeWrapper, buildGoModule, fetchYarnDeps }:
 
 let
   pname = "coder";
@@ -60,6 +60,7 @@ buildGoModule rec {
     python3
     pkg-config
     installShellFiles
+    makeWrapper
   ];
 
   postInstall = ''
