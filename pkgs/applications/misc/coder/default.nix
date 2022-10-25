@@ -46,6 +46,10 @@ buildGoModule rec {
     cd ..
   '';
 
+  postBuild = ''
+    wrapProgram $out/bin/coder --prefix PATH : ${lib.makeBinPath [ pkgs.terraform ]}
+  '';
+
   tags = [ "embed" ];
 
   nativeBuildInputs = with pkgs; [
