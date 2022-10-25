@@ -22,6 +22,7 @@ import ./make-test-python.nix ({ pkgs, ... }: {
       };
       services.coder = {
         enable = true;
+        accessUrl = "http://localhost:3000";
         postgresqlUrl = "user=coder database=coder host=/run/postgresql sslmode=disable";
       };
     };
