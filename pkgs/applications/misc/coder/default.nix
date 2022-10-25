@@ -46,10 +46,6 @@ buildGoModule rec {
     cd ..
   '';
 
-  postInstall = ''
-    wrapProgram $out/bin/coder --prefix PATH : ${lib.makeBinPath [ pkgs.terraform ]}
-  '';
-
   tags = [ "embed" ];
 
   nativeBuildInputs = with pkgs; [
@@ -67,6 +63,8 @@ buildGoModule rec {
     installShellCompletion --cmd coder \
       --bash <($out/bin/coder completion bash) \
       --zsh <($out/bin/coder completion zsh)
+
+    wrapProgram $out/bin/coder --prefix PATH : ${lib.makeBinPath [ pkgs.terraform ]}
   '';
 
   meta = with lib; {
