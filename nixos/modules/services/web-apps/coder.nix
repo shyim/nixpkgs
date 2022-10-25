@@ -7,7 +7,23 @@ let
 in {
   options = {
     services.coder = {
-      enable = mkEnableOption (lib.mdDoc "Coder enable the service");
+      enable = mkEnableOption (lib.mdDoc "Coder service");
+
+      user = mkOption {
+        type = types.str;
+        default = "coder";
+        description = lib.mdDoc ''
+          User under which the coder service runs.
+        '';
+      };
+
+      group = mkOption {
+        type = types.str;
+        default = "coder";
+        description = lib.mdDoc ''
+          Group under which the coder service runs.
+        '';
+      };
 
       package = mkOption {
         type = types.package;
@@ -24,14 +40,6 @@ in {
           Home directory for coder user
         '';
         default = "/var/lib/coder";
-      };
-
-      virtualHost = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = lib.mdDoc ''
-          Name of the nginx virtualhost to use and setup. If null, do not setup any virtualhost.
-        '';
       };
 
       listenAddress = mkOption {
@@ -88,6 +96,13 @@ in {
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.postgresqlUrl == null;
+        message = "Coder requires a valid postgres url set to services.coder.postgresqlUrl";
+      }
+    ];
+
     systemd.services.coder = let
       # see https://github.com/coder/coder/issues/4731
       pgCtl = pkgs.writeScript "pg_ctl" ''
@@ -140,26 +155,18 @@ in {
         ExecStart = ''
           ${cfg.package}/bin/coder server
         '';
-        User = "coder";
-        Group = "coder";
+        User = cfg.user;
+        Group = cfg.group;
       };
     };
 
-    users.users.coder = {
+    users.groups.${cfg.group} = { };
+    users.users.${cfg.user} = {
       description = "Coder service user";
-      group = "coder";
+      group = cfg.group;
       home = cfg.homeDir;
       createHome = true;
       isSystemUser = true;
-    };
-    users.groups.coder = {};
-
-    services.nginx = mkIf (cfg.virtualHost != null) {
-      enable = true;
-      recommendedProxySettings = true;
-      virtualHosts.${cfg.virtualHost} = {
-        locations."/".proxyPass = "http://${cfg.listenAddress}";
-      };
     };
   };
 }

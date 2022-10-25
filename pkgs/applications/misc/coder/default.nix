@@ -15,9 +15,6 @@ let
     yarnLock = src + "/site/yarn.lock";
     sha256 = "sha256-uDNPRQTpsgxyC5ks+2Qq/wiKjkbjWwSO+cJc5X6qmAA=";
   };
-
-  yarn16 = pkgs.yarn.override { nodejs = pkgs.nodejs-16_x; };
-  nodePackages16 = pkgs.nodePackages.override { nodejs = pkgs.nodejs-16_x; };
 in
 buildGoModule rec {
   inherit pname version src;
@@ -31,7 +28,7 @@ buildGoModule rec {
   ldflags = [
     "-s"
     "-w"
-    "-X github.com/coder/coder/buildinfo.tag=${version}"
+    "-X github.com/coder/coder/buildinfo.tag=${src.rev}"
   ];
 
   preBuild = ''
@@ -53,9 +50,9 @@ buildGoModule rec {
 
   nativeBuildInputs = with pkgs; [
     fixup_yarn_lock
-    nodejs-16_x
-    yarn16
-    nodePackages16.node-pre-gyp
+    nodejs
+    yarn
+    nodePackages.node-pre-gyp
     python3
     pkg-config
     installShellFiles
